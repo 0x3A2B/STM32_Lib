@@ -8,9 +8,9 @@ I2C_HandleTypeDef   *mpu5060_i2c;
 
 
 /**
-  * @brief   写数据到MPU6050寄存器
-  * @param   reg_add:寄存器地址
-	* @param	 reg_data:要写入的数据
+  * @brief   初始化I2C
+  * @param   i2c传入的HAL i2c 句柄
+	* @param	 
   * @retval  
   */
 void MPU6050_I2C_handle_init(I2C_HandleTypeDef *i2c)
@@ -19,7 +19,7 @@ void MPU6050_I2C_handle_init(I2C_HandleTypeDef *i2c)
 }
 
 /**
-  * @brief  写寄存器(多次尝试)，这是提供给上层的接口
+  * @brief  写寄存器，这是提供给上层的接口
 	* @param  slave_addr: 从机地址
 	* @param 	reg_addr:寄存器地址
 	* @param len：写入的长度
@@ -31,7 +31,6 @@ int Sensors_I2C_WriteRegister(unsigned char slave_addr,
                                         unsigned short len, 
                                         unsigned char *data_ptr)
 {
-  char retries=0;
   int ret = 0;
                                
   ret = 0;
@@ -41,7 +40,7 @@ int Sensors_I2C_WriteRegister(unsigned char slave_addr,
 }
 
 /**
-  * @brief  读寄存器(多次尝试)，这是提供给上层的接口
+  * @brief  读寄存器，这是提供给上层的接口
 	* @param  slave_addr: 从机地址
 	* @param 	reg_addr:寄存器地址
 	* @param len：要读取的长度

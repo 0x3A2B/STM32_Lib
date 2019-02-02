@@ -5,7 +5,7 @@
 typedef uint8_t u8;
 	
 // MPU6050, Standard address 0x68
-#define MPU6050_ADDRESS         0x68
+#define MPU6050_ADDRESS         0xD0     //need change?
 #define MPU6050_WHO_AM_I        0x75
 #define MPU6050_SMPLRT_DIV      0  //8000Hz
 #define MPU6050_DLPF_CFG        0
