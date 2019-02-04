@@ -1,29 +1,16 @@
 #include "mpu6050.h"
-#include "sys.h"
 #include "delay.h"
-#include "usart.h"   
-//////////////////////////////////////////////////////////////////////////////////	 
-//本程序只供学习使用，未经作者许可，不得用于其它任何用途
-//ALIENTEK STM32F407开发板
-//MPU6050 驱动代码	   
-//正点原子@ALIENTEK
-//技术论坛:www.openedv.com
-//创建日期:2014/5/9
-//版本：V1.0
-//版权所有，盗版必究。
-//Copyright(C) 广州市星翼电子科技有限公司 2014-2024
-//All rights reserved									  
-////////////////////////////////////////////////////////////////////////////////// 	
 
+I2C_HandleTypeDef *mpu6050_i2c;
 //初始化MPU6050
 //返回值:0,成功
 //    其他,错误代码
-u8 MPU_Init(void)
+u8 MPU_Init(I2C_HandleTypeDef *i2c)
 { 
-	u8 res;
-	IIC_Init();//初始化IIC总线
+	mpu6050_i2c = i2c;
+	u8 res; 
 	MPU_Write_Byte(MPU_PWR_MGMT1_REG,0X80);	//复位MPU6050
-    delay_ms(100);
+	delay_ms(100);
 	MPU_Write_Byte(MPU_PWR_MGMT1_REG,0X00);	//唤醒MPU6050 
 	MPU_Set_Gyro_Fsr(3);					//陀螺仪传感器,±2000dps
 	MPU_Set_Accel_Fsr(0);					//加速度传感器,±2g
@@ -90,13 +77,13 @@ u8 MPU_Set_Rate(u16 rate)
 //返回值:温度值(扩大了100倍)
 short MPU_Get_Temperature(void)
 {
-    u8 buf[2]; 
-    short raw;
+	u8 buf[2]; 
+	short raw;
 	float temp;
 	MPU_Read_Len(MPU_ADDR,MPU_TEMP_OUTH_REG,2,buf); 
-    raw=((u16)buf[0]<<8)|buf[1];  
-    temp=36.53+((double)raw)/340;  
-    return temp*100;;
+	raw=((u16)buf[0]<<8)|buf[1];  
+	temp=36.53+((double)raw)/340;  
+	return temp*100;
 }
 //得到陀螺仪值(原始值)
 //gx,gy,gz:陀螺仪x,y,z轴的原始读数(带符号)
@@ -104,7 +91,7 @@ short MPU_Get_Temperature(void)
 //    其他,错误代码
 u8 MPU_Get_Gyroscope(short *gx,short *gy,short *gz)
 {
-    u8 buf[6],res;  
+  u8 buf[6],res;  
 	res=MPU_Read_Len(MPU_ADDR,MPU_GYRO_XOUTH_REG,6,buf);
 	if(res==0)
 	{
@@ -112,7 +99,7 @@ u8 MPU_Get_Gyroscope(short *gx,short *gy,short *gz)
 		*gy=((u16)buf[2]<<8)|buf[3];  
 		*gz=((u16)buf[4]<<8)|buf[5];
 	} 	
-    return res;;
+  return res;
 }
 //得到加速度值(原始值)
 //gx,gy,gz:陀螺仪x,y,z轴的原始读数(带符号)
@@ -120,7 +107,7 @@ u8 MPU_Get_Gyroscope(short *gx,short *gy,short *gz)
 //    其他,错误代码
 u8 MPU_Get_Accelerometer(short *ax,short *ay,short *az)
 {
-    u8 buf[6],res;  
+  u8 buf[6],res;  
 	res=MPU_Read_Len(MPU_ADDR,MPU_ACCEL_XOUTH_REG,6,buf);
 	if(res==0)
 	{
@@ -128,7 +115,7 @@ u8 MPU_Get_Accelerometer(short *ax,short *ay,short *az)
 		*ay=((u16)buf[2]<<8)|buf[3];  
 		*az=((u16)buf[4]<<8)|buf[5];
 	} 	
-    return res;;
+  return res;
 }
 //IIC连续写
 //addr:器件地址 
@@ -138,27 +125,8 @@ u8 MPU_Get_Accelerometer(short *ax,short *ay,short *az)
 //返回值:0,正常
 //    其他,错误代码
 u8 MPU_Write_Len(u8 addr,u8 reg,u8 len,u8 *buf)
-{
-	u8 i; 
-    IIC_Start(); 
-	IIC_Send_Byte((addr<<1)|0);//发送器件地址+写命令	
-	if(IIC_Wait_Ack())	//等待应答
-	{
-		IIC_Stop();		 
-		return 1;		
-	}
-    IIC_Send_Byte(reg);	//写寄存器地址
-    IIC_Wait_Ack();		//等待应答
-	for(i=0;i<len;i++)
-	{
-		IIC_Send_Byte(buf[i]);	//发送数据
-		if(IIC_Wait_Ack())		//等待ACK
-		{
-			IIC_Stop();	 
-			return 1;		 
-		}		
-	}    
-    IIC_Stop();	 
+{ 
+	HAL_I2C_Mem_Write(mpu6050_i2c, addr<<1, reg, 1, buf, len, 0x3f3f3f);
 	return 0;	
 } 
 //IIC连续读
@@ -170,26 +138,7 @@ u8 MPU_Write_Len(u8 addr,u8 reg,u8 len,u8 *buf)
 //    其他,错误代码
 u8 MPU_Read_Len(u8 addr,u8 reg,u8 len,u8 *buf)
 { 
- 	IIC_Start(); 
-	IIC_Send_Byte((addr<<1)|0);//发送器件地址+写命令	
-	if(IIC_Wait_Ack())	//等待应答
-	{
-		IIC_Stop();		 
-		return 1;		
-	}
-    IIC_Send_Byte(reg);	//写寄存器地址
-    IIC_Wait_Ack();		//等待应答
-    IIC_Start();
-	IIC_Send_Byte((addr<<1)|1);//发送器件地址+读命令	
-    IIC_Wait_Ack();		//等待应答 
-	while(len)
-	{
-		if(len==1)*buf=IIC_Read_Byte(0);//读数据,发送nACK 
-		else *buf=IIC_Read_Byte(1);		//读数据,发送ACK  
-		len--;
-		buf++; 
-	}    
-    IIC_Stop();	//产生一个停止条件 
+	HAL_I2C_Mem_Read(mpu6050_i2c, addr<<1, reg, 1, buf, len, 0x3f3f3f); 
 	return 0;	
 }
 //IIC写一个字节 
@@ -199,22 +148,7 @@ u8 MPU_Read_Len(u8 addr,u8 reg,u8 len,u8 *buf)
 //    其他,错误代码
 u8 MPU_Write_Byte(u8 reg,u8 data) 				 
 { 
-    IIC_Start(); 
-	IIC_Send_Byte((MPU_ADDR<<1)|0);//发送器件地址+写命令	
-	if(IIC_Wait_Ack())	//等待应答
-	{
-		IIC_Stop();		 
-		return 1;		
-	}
-    IIC_Send_Byte(reg);	//写寄存器地址
-    IIC_Wait_Ack();		//等待应答 
-	IIC_Send_Byte(data);//发送数据
-	if(IIC_Wait_Ack())	//等待ACK
-	{
-		IIC_Stop();	 
-		return 1;		 
-	}		 
-    IIC_Stop();	 
+  HAL_I2C_Mem_Write(mpu6050_i2c, MPU_ADDR<<1, reg, 1, &data, 1, 0x3f3f3f); 
 	return 0;
 }
 //IIC读一个字节 
@@ -223,16 +157,7 @@ u8 MPU_Write_Byte(u8 reg,u8 data)
 u8 MPU_Read_Byte(u8 reg)
 {
 	u8 res;
-    IIC_Start(); 
-	IIC_Send_Byte((MPU_ADDR<<1)|0);//发送器件地址+写命令	
-	IIC_Wait_Ack();		//等待应答 
-    IIC_Send_Byte(reg);	//写寄存器地址
-    IIC_Wait_Ack();		//等待应答
-    IIC_Start();
-	IIC_Send_Byte((MPU_ADDR<<1)|1);//发送器件地址+读命令	
-    IIC_Wait_Ack();		//等待应答 
-	res=IIC_Read_Byte(0);//读取数据,发送nACK 
-    IIC_Stop();			//产生一个停止条件 
+	HAL_I2C_Mem_Read(mpu6050_i2c, MPU_ADDR<<1, reg, 1, &res, 1, 0x3f3f3f); 
 	return res;		
 }
 

@@ -1,19 +1,9 @@
 #ifndef __MPU6050_H
 #define __MPU6050_H
-#include "hal_stm32f4xx.h"   												  	  
-//////////////////////////////////////////////////////////////////////////////////	 
-//本程序只供学习使用，未经作者许可，不得用于其它任何用途
-//ALIENTEK STM32F407开发板
-//MPU6050 驱动代码	   
-//正点原子@ALIENTEK
-//技术论坛:www.openedv.com
-//创建日期:2014/5/9
-//版本：V1.0
-//版权所有，盗版必究。
-//Copyright(C) 广州市星翼电子科技有限公司 2014-2024
-//All rights reserved									  
-////////////////////////////////////////////////////////////////////////////////// 
-
+ 
+#include "stm32f4xx_hal.h"
+typedef uint8_t u8;
+typedef uint16_t u16;
 //#define MPU_ACCEL_OFFS_REG		0X06	//accel_offs寄存器,可读取版本号,寄存器手册未提到
 //#define MPU_PROD_ID_REG			0X0C	//prod id寄存器,在寄存器手册未提到
 #define MPU_SELF_TESTX_REG		0X0D	//自检寄存器X
@@ -92,7 +82,7 @@
 //#define MPU_READ    0XD1
 //#define MPU_WRITE   0XD0
 
-u8 MPU_Init(void); 								//初始化MPU6050
+u8 MPU_Init(I2C_HandleTypeDef *i2c); 								//初始化MPU6050
 u8 MPU_Write_Len(u8 addr,u8 reg,u8 len,u8 *buf);//IIC连续写
 u8 MPU_Read_Len(u8 addr,u8 reg,u8 len,u8 *buf); //IIC连续读 
 u8 MPU_Write_Byte(u8 reg,u8 data);				//IIC写一个字节
