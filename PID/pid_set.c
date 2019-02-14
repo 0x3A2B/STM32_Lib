@@ -24,13 +24,13 @@
  */
 void PID_set_f32(PID_f32 *pid, float32_t Kp, float32_t Ki, float32_t Kd){
    pid_reset_f32(pid);       // We need to reset pid befor change the p, i, d value.
-   pid->Kp = Kp;
-   pid->Ki = Ki;
-   pid->Kd = Kd;
+   pid->kp = Kp;
+   pid->ki = Ki;
+   pid->kd = Kd;
 }
 
 /**
- * @brief 更改PID值
+ * @brief 增减PID值
  * 
  * @param pid 
  * @param Kp 
@@ -39,9 +39,9 @@ void PID_set_f32(PID_f32 *pid, float32_t Kp, float32_t Ki, float32_t Kd){
  */
 void PID_setdiff_f32(PID_f32 *pid, float32_t Kp, float32_t Ki, float32_t Kd){
    pid_reset_f32(pid);       // We need to reset pid befor change the p, i, d value.
-   pid->Kp += Kp;
-   pid->Ki += Ki;
-   pid->Kd += Kd;
+   pid->kp += Kp;
+   pid->ki += Ki;
+   pid->kd += Kd;
 }
 /* Private types -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/

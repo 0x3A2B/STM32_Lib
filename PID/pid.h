@@ -16,6 +16,11 @@
    extern "C" {
 #endif
 
+
+
+/* Includes ------------------------------------------------------------------*/
+#include "stm32f4xx_hal.h"
+/* Exported types ------------------------------------------------------------*/
 /**
 * @brief 8-bit fractional data type in 1.7 format.
 */
@@ -45,25 +50,27 @@ typedef float float32_t;
 * @brief 64-bit floating-point type definition.
 */
 typedef double float64_t;
-
-/* Includes ------------------------------------------------------------------*/
-/* Exported types ------------------------------------------------------------*/
 typedef struct
 {
 
-   float32_t Kp;      /**< The proportional gain. */
-   float32_t Ki;      /**< The integral gain. */
-   float32_t Kd;      /**< The derivative gain. */
-}PID_f32;  
+   float32_t kp;      /**< The proportional gain. */
+   float32_t ki;      /**< The integral gain. */
+   float32_t kd;      /**< The derivative gain. */
+
+   float32_t e, ee;
+   float32_t tar;     /**< The target value 目标值*/
+   float32_t cur;     /**< The current 当前值*/
+} PID_f32;  
 
 /* Exported constants --------------------------------------------------------*/
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
-void pid_setup_f32(PID_f32 *pid);
+void PID_setup_f32(PID_f32 *pid);
 void PID_set_f32(PID_f32 *pid, float32_t Kp, float32_t Ki, float32_t Kd);
 void PID_setdiff_f32(PID_f32 *pid, float32_t Kp, float32_t Ki, float32_t Kd);
 
 /* Private types -------------------------------------------------------------*/
+
 /* Private variables ---------------------------------------------------------*/
 /* Private constants ---------------------------------------------------------*/
 /* Private macros ------------------------------------------------------------*/

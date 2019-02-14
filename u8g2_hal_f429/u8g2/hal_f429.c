@@ -10,10 +10,11 @@ void u8g2_i2c_handle_init(I2C_HandleTypeDef *i2c){
 
 uint8_t u8x8_gpio_and_delay_stm32f4_hal(u8x8_t *u8x8, uint8_t msg, uint8_t arg_int, void *arg_ptr)
 {
+  GPIO_PinState pin_status ;
   switch(msg)
   {
     case U8X8_MSG_GPIO_AND_DELAY_INIT:	// called once during init phase of u8g2/u8x8
-		HAL_Delay(100);
+		  //HAL_Delay(100);
       break;							// can be used to setup pins
     case U8X8_MSG_DELAY_NANO:			// delay arg_int * 1 nano second
       break;    
@@ -24,13 +25,12 @@ uint8_t u8x8_gpio_and_delay_stm32f4_hal(u8x8_t *u8x8, uint8_t msg, uint8_t arg_i
       //delay_us(arg_int * 10);
       break;
     case U8X8_MSG_DELAY_MILLI:			// delay arg_int * 1 milli second
-      HAL_Delay(arg_int);
+      //HAL_Delay(arg_int);
       break;
     case U8X8_MSG_DELAY_I2C:				// arg_int is the I2C speed in 100KHz, e.g. 4 = 400 KHz
       //if(arg_int == 1) delay_us(5);
       //else if(arg_int ==4) delay_us(1);
       break;	          						// arg_int=1: delay by 5us, arg_int = 4: delay by 1.25us
-
     case U8X8_MSG_GPIO_I2C_CLOCK:
       if(arg_int){                    // arg_int=1: Input dir with pullup high for I2C clock pin
         //HAL_GPIO_WritePin(OLED_GPIO, oled_scl, GPIO_PIN_SET);
@@ -49,23 +49,31 @@ uint8_t u8x8_gpio_and_delay_stm32f4_hal(u8x8_t *u8x8, uint8_t msg, uint8_t arg_i
         //HAL_GPIO_WritePin(OLED_GPIO, oled_sda, GPIO_PIN_RESET);
       }
       break;
-   //  case U8X8_MSG_GPIO_MENU_SELECT:
-   //    u8x8_SetGPIOResult(u8x8, /* get menu select pin state */ 0);
-   //    break;
-   //  case U8X8_MSG_GPIO_MENU_NEXT:
-   //    u8x8_SetGPIOResult(u8x8, /* get menu next pin state */ 0);
-   //    break;
-   //  case U8X8_MSG_GPIO_MENU_PREV:
-   //    u8x8_SetGPIOResult(u8x8, /* get menu prev pin state */ 0);
-   //    break;
-   //  case U8X8_MSG_GPIO_MENU_HOME:
-   //    u8x8_SetGPIOResult(u8x8, /* get menu home pin state */ 0);
-   //    break;
-   //  default:
-   //    u8x8_SetGPIOResult(u8x8, 1);			// default return value
-   //    break;
-    default:  
-      return 0; 
+    case U8X8_MSG_GPIO_MENU_SELECT:
+      pin_status = HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_13);
+			if(pin_status == GPIO_PIN_SET)
+				u8x8_SetGPIOResult(u8x8, 1);
+			else
+				u8x8_SetGPIOResult(u8x8, 0);
+      break;
+    case U8X8_MSG_GPIO_MENU_NEXT:
+      pin_status = HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0);
+      if(pin_status == GPIO_PIN_SET)
+				u8x8_SetGPIOResult(u8x8, 1);
+			else
+				u8x8_SetGPIOResult(u8x8, 0);
+      break;
+    case U8X8_MSG_GPIO_MENU_PREV:
+      //pint_status = HAL_GPIO_ReadPin();
+      u8x8_SetGPIOResult(u8x8, 0);
+      break;
+    case U8X8_MSG_GPIO_MENU_HOME:
+      //pint_status = HAL_GPIO_ReadPin();
+      u8x8_SetGPIOResult(u8x8, 0);
+      break;
+    default:
+      u8x8_SetGPIOResult(u8x8, 1);			// default return value
+      break;
   }
   return 1;
 }
@@ -87,7 +95,7 @@ uint8_t u8x8_byte_i2c_stm32_hal(u8x8_t *u8x8, uint8_t msg, uint8_t arg_int, void
       }      
       break;
     case U8X8_MSG_BYTE_INIT:
-			HAL_Delay(100);
+			//HAL_Delay(100);
       /* add your custom code to init i2c subsystem */
       break;
     case U8X8_MSG_BYTE_SET_DC:
