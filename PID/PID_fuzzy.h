@@ -8,8 +8,8 @@
  * @copyright Copyright (c) 2019
  * 
  */
-#ifndef __FUZZY_H__
-#define __FUZZY_H__
+#ifndef __PID_FUZZY_H__ 
+#define __PID_FUZZY_H__ 
 
 #ifdef __cplusplus
    extern "C" {
@@ -150,4 +150,4 @@ float32_t LinearRealization(float32_t max, float32_t min, float32_t val);
 }
 #endif
 
-#endif  /*  __FUZZY_H__ */
+#endif	// __PID_FUZZY_H__

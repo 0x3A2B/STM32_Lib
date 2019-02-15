@@ -8,8 +8,8 @@
  * @copyright Copyright (c) 2019
  * 
  */
-#ifndef __NNPID_H__ 
-#define __NNPID_H__  
+#ifndef __PID_HEBB_H__ 
+#define __PID_HEBB_H__ 
 
 #ifdef __cplusplus
    extern "C" {
@@ -56,5 +56,4 @@ static float32_t fabs_(float32_t error);
 }
 #endif
 
-
-#endif	// __NNPID_H__ 
+#endif	// __PID_HEBB_H__

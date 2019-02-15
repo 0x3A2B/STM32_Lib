@@ -8,8 +8,9 @@
  * @copyright Copyright (c) 2019
  * 
  */
-#ifndef __STDPID_H__ 
-#define __STDPID_H__ 
+#ifndef __PID_STD_H__ 
+#define __PID_STD_H__ 
+
 #ifdef __cplusplus
    extern "C" {
 #endif
@@ -46,4 +47,4 @@ void PID_setdiff_f32(PID_f32 *pid, float32_t Kp, float32_t Ki, float32_t Kd);
 }
 #endif
 
-#endif	// __STDPID_H__
+#endif	// __PID_STD_H__

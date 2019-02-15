@@ -19,26 +19,32 @@
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
 /* ########################## Module Selection ############################## */
-#define PID_MODULE_ENABLED 
+#define PID_ENABLED 
 
-//#define PID_STDPID_ENABLED
+//#define PID_STD_ENABLED
 //#define PID_FUZZY_ENABLED
 //#define PID_HEBB_ENABLED
+#define PID_RBF_ENABLED
 
 #ifdef PID_STDPID_ENABLED
 #define PID_STDPID_ENABLED 
-#include "stdPID.h"
+#include "PID_std.h"
 #endif	// PID_STDPID_ENABLED
 
-#ifdef PID_FUZZY_ENABLED
-#define PID_FUZZY_ENABLED 
-#include "fuzzyPID.h"
-#endif	// PID_FUZZY_ENABLED
+#ifdef PID_FUZZYPID_ENABLED
+#define PID_FUZZYPID_ENABLED 
+#include "PID_fuzzy.h"
+#endif	// PID_FUZZYPID_ENABLED
 
-#ifdef PID_HEBB_ENABLED
-#define PID_HEBB_ENABLED 
-#include "HebbPID.h"
-#endif	// PID_HABB_ENABLED
+#ifdef PID_HEBBPID_ENABLED
+#define PID_HEBBPID_ENABLED 
+#include "PID_hebb.h"
+#endif	// PID_HABBPID_ENABLED
+
+#ifndef PID_RBF_ENABLED
+#define PID_RBF_ENABLED
+#include "PID_rbf.h"
+#endif	// PID_RBF_ENABLED
 
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
