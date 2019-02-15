@@ -48,6 +48,16 @@
 
 运行PID算法: `FuzzyPID(FUZZYPID *pid, float32_t cur)`
 
+PID输出: `PID->output;`
+
+### Habb有监督神经PID
+
+初始化PID结构体: `NeuralPIDInitialization(NEURALPID *vPID, float32_t tar, float vMax,float vMin, float deadband)`
+
+运行PID算法: `HebbPID(NEURALPID *vPID,float pv);`
+
+PID输出: `PID->result;`
+
 ## Reference
 ...
 
