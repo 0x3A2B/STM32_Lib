@@ -50,7 +50,7 @@ typedef struct{
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
 //fuzzy pid
-void FuzzyPIDInit(FUZZYPID *pid, float32_t tar,\
+void FuzzyPIDInit(FUZZYPID *pid, float32_t tar,float32_t maximum, float32_t minimum,\
                   float32_t maxdKp, float32_t mindKp, float32_t qKp, \
                   float32_t maxdKi, float32_t mindKi, float32_t qKi, \
                   float32_t maxdKd, float32_t mindKd, float32_t qKd);

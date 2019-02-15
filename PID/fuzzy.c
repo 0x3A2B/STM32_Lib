@@ -20,36 +20,38 @@
 #define smf 1
 /* Exported functions --------------------------------------------------------*/
 /**
- * @brief 模糊PID初始化
+ * @brief 
  * 
- * @param pid PID结构体
- * @param tar      PID目标值
- * @param maxdKp   Kp增量的最大限值
- * @param mindKp   Kp增量的最小限值
- * @param qKp      Kp增量的影响系数
- * @param maxdKi   Ki增量的最大限值
- * @param mindKi   Ki增量的最小限值
- * @param qKi      Ki增量的影响系数
- * @param maxdKd   Kd增量的最大限值
- * @param mindKd   Kd增量的最小限值
- * @param qKd      Kd增量的影响系数
+ * @param pid 
+ * @param tar       目标值
+ * @param maximum   输出值的上限
+ * @param minimum   输出值的下限
+ * @param maxdKp    Kp增量的最大限值  
+ * @param mindKp    Kp增量的最小限值 
+ * @param qKp       Kp增量的影响系数  
+ * @param maxdKi    Ki增量的最大限值 
+ * @param mindKi    Ki增量的最小限值 
+ * @param qKi       Ki增量的影响系数  
+ * @param maxdKd    Kd增量的最大限值 
+ * @param mindKd    Kd增量的最小限值 
+ * @param qKd       Kd增量的影响系数
  */
-void FuzzyPIDInit(FUZZYPID *pid, float32_t tar, \
+void FuzzyPIDInit(FUZZYPID *pid, float32_t tar,float32_t maximum, float32_t minimum,\
                   float32_t maxdKp, float32_t mindKp, float32_t qKp, \
                   float32_t maxdKi, float32_t mindKi, float32_t qKi, \
                   float32_t maxdKd, float32_t mindKd, float32_t qKd){
-   pid->tar    = tar;
-   pid->maxdKp = maxdKp;   
-   pid->mindKp = mindKp;   
-   pid->qKp    = qKp;      
-   pid->maxdKi = maxdKi;   
-   pid->mindKi = mindKi;   
-   pid->qKi    = qKi;      
-   pid->maxdKd = maxdKd;   
-   pid->mindKd = mindKd;   
-   pid->qKd    = qKd;   
-	 pid->maximum= 2;
-   pid->minimum= 0;							
+   pid->tar      = tar;
+   pid->maxdKp   = maxdKp;   
+   pid->mindKp   = mindKp;   
+   pid->qKp      = qKp;      
+   pid->maxdKi   = maxdKi;   
+   pid->mindKi   = mindKi;   
+   pid->qKi      = qKi;      
+   pid->maxdKd   = maxdKd;   
+   pid->mindKd   = mindKd;   
+   pid->qKd      = qKd;   
+	pid->maximum  = maximum;
+   pid->minimum  = minimum;							
 }
 /**
  * @brief 模糊PID
