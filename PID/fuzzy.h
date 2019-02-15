@@ -48,6 +48,8 @@ typedef struct{
 
 /* Exported constants --------------------------------------------------------*/
 /* Exported macro ------------------------------------------------------------*/
+//#define zmf 1
+//#define smf 1
 /* Exported functions --------------------------------------------------------*/
 //fuzzy pid
 void FuzzyPIDInit(FUZZYPID *pid, float32_t tar,float32_t maximum, float32_t minimum,\

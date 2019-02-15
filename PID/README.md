@@ -8,7 +8,7 @@
 行:E, 列:EC
 
 | Kp | NL | NM | NS | ZE | PS | PM | PL |
-|:---|:--:|:--:|:--:|:--:|:--:|:--:|:--:|
+|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|
 | NL | PL | PL | PM | PM | PS | PS | ZE |
 | NM | PL | PL | PM | PM | PS | ZE | ZE |
 | NS | PM | PM | PM | PS | ZE | NS | NM |
@@ -18,7 +18,7 @@
 | PL | ZE | NS | NS | NM | NM | NL | NL |
 
 | Ki | NL | NM | NS | ZE | PS | PM | PL |
-|:---|:--:|:--:|:--:|:--:|:--:|:--:|:--:|
+|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|
 | NL | NL | NL | NL | NM | NM | ZE | ZE |
 | NM | NL | NL | NM | NM | NS | ZE | ZE |
 | NS | NM | NM | NS | NS | ZE | PS | PS |
@@ -28,7 +28,7 @@
 | PL | ZE | ZE | PS | PM | PL | PL | PL |
 
 | Kd | NL | NM | NS | ZE | PS | PM | PL |
-|:---|:--:|:--:|:--:|:--:|:--:|:--:|:--:|
+|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|
 | NL | PS | PS | ZE | ZE | ZE | PL | PL |
 | NM | NS | NS | NS | NS | ZE | NS | PM |
 | NS | NL | NL | NM | NS | ZE | PS | PM |

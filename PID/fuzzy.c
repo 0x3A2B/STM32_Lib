@@ -16,8 +16,6 @@
 /* Exported constants --------------------------------------------------------*/
 
 /* Exported macro ------------------------------------------------------------*/
-#define zmf 1
-#define smf 1
 /* Exported functions --------------------------------------------------------*/
 /**
  * @brief 
@@ -66,11 +64,11 @@ void FuzzyPID(FUZZYPID *pid, float32_t cur){
    //FuzzyPIDset(pid, deltaK);
 
    //pid->output = pid->kp*pid->e + pid->ki*pid->sume+ pid->kd*(pid->e - pid->ee);
-	 pid->output = (pid->kp + deltaK[0]) * pid->e + (pid->ki + deltaK[1])*pid->sume+ (pid->kd + deltaK[2])*(pid->e - pid->ee);
+	pid->output = (pid->kp + deltaK[0]) * pid->e + (pid->ki + deltaK[1])*pid->sume+ (pid->kd + deltaK[2])*(pid->e - pid->ee);
 	
    pid->sume += pid->e;
    pid->ee = pid->e;
-	 pid->e = pid->tar - cur;
+	pid->e = pid->tar - cur;
 }
 
 /* Private types -------------------------------------------------------------*/
@@ -155,7 +153,6 @@ static void CalcMembership(float32_t *ms, int32_t * index, float32_t qv){
 #endif
       index[0]=5;
       index[1]=6;
-
 #ifdef smf
 		  temp = (qv-a2)/(b2-a2);
 		  temp *= temp;
@@ -186,8 +183,8 @@ static void FuzzyComputation (FUZZYPID *vPID, float *deltaK, float pv){
    CalcMembership(msE, indexE, qValue[0]);
    CalcMembership(msEC, indexEC, qValue[1]);
 
-   qValueK[0]=msE[0] * (msEC[0] * ruleKp[ 6-indexE[0] ][ 6-indexEC[0] ] + msEC[1] * ruleKp[ 6-indexE[0] ] [ 6-indexEC[1] ])\
-             +msE[1] * (msEC[0] * ruleKp[ 6-indexE[1] ][ 6-indexEC[0] ] + msEC[1] * ruleKp[ 6-indexE[1] ] [ 6-indexEC[1] ]);
+   qValueK[0]=msE[0] * (msEC[0] * ruleKp[ indexE[0] ][ indexEC[0] ] + msEC[1] * ruleKp[ indexE[0] ] [ indexEC[1] ])\
+             +msE[1] * (msEC[0] * ruleKp[ indexE[1] ][ indexEC[0] ] + msEC[1] * ruleKp[ indexE[1] ] [ indexEC[1] ]);
    qValueK[1]=msE[0] * (msEC[0] * ruleKi[ indexE[0] ][ indexEC[0] ] + msEC[1] * ruleKi[ indexE[0] ] [ indexEC[1] ])\
              +msE[1] * (msEC[0] * ruleKi[ indexE[1] ][ indexEC[0] ] + msEC[1] * ruleKi[ indexE[1] ] [ indexEC[1] ]);
    qValueK[2]=msE[0] * (msEC[0] * ruleKd[ indexE[0] ][ indexEC[0] ] + msEC[1] * ruleKd[ indexE[0] ] [ indexEC[1] ])\
