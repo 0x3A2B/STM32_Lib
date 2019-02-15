@@ -1,0 +1,6 @@
+{
+   "files.associations": {
+      "hebbpid.h": "c",
+      "pid.h": "c"
+   }
+}
