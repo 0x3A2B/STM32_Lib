@@ -11,10 +11,13 @@
 /* Includes ------------------------------------------------------------------*/
 #include "pid.h"
 #include "fuzzy.h"
+#include "arm_math.h"
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
 
 /* Exported macro ------------------------------------------------------------*/
+#define zmf 1
+#define smf 1
 /* Exported functions --------------------------------------------------------*/
 /**
  * @brief 模糊PID初始化
@@ -44,7 +47,9 @@ void FuzzyPIDInit(FUZZYPID *pid, float32_t tar, \
    pid->qKi    = qKi;      
    pid->maxdKd = maxdKd;   
    pid->mindKd = mindKd;   
-   pid->qKd    = qKd;      
+   pid->qKd    = qKd;   
+	 pid->maximum= 2;
+   pid->minimum= 0;							
 }
 /**
  * @brief 模糊PID
@@ -56,12 +61,14 @@ void FuzzyPID(FUZZYPID *pid, float32_t cur){
    float32_t deltaK[3];               //模糊PID结果
 
    FuzzyComputation(pid, deltaK, cur);
-   FuzzyPIDset(pid, deltaK);
+   //FuzzyPIDset(pid, deltaK);
 
-   pid->output = pid->kp*pid->e + pid->ki*pid->sume+ pid->kd*(pid->e - pid->ee);
-
+   //pid->output = pid->kp*pid->e + pid->ki*pid->sume+ pid->kd*(pid->e - pid->ee);
+	 pid->output = (pid->kp + deltaK[0]) * pid->e + (pid->ki + deltaK[1])*pid->sume+ (pid->kd + deltaK[2])*(pid->e - pid->ee);
+	
    pid->sume += pid->e;
    pid->ee = pid->e;
+	 pid->e = pid->tar - cur;
 }
 
 /* Private types -------------------------------------------------------------*/
@@ -71,7 +78,7 @@ void FuzzyPID(FUZZYPID *pid, float32_t cur){
 /* Private functions ---------------------------------------------------------*/
 /**
  * @brief         线性量化操作函数
- *                论域{-6，-5，-4，-3，-2，-1，0，1，2，3，4，5，6}
+ *                论域{-3，-2，-1，0，1，2，3}
  * @param vPID    输入PID结构体
  * @param pv      当前值
  * @param qValue  偏差 及其 增量的 量化值
@@ -83,8 +90,8 @@ static void LinearQuantization(FUZZYPID *vPID, float32_t *qValue, float32_t pv){
    thisError=vPID->tar - pv;                  //计算偏差值
    deltaError=thisError - vPID->e;            //计算偏差增量
 
-   qValue[0]=6.0*thisError/(vPID->maximum-vPID->minimum);
-   qValue[1]=3.0*deltaError/(vPID->maximum-vPID->minimum);
+   qValue[0]=3.0*thisError/(vPID->maximum-vPID->minimum);
+   qValue[1]=1.5*deltaError/(vPID->maximum-vPID->minimum);
 
 }
 
@@ -96,41 +103,66 @@ static void LinearQuantization(FUZZYPID *vPID, float32_t *qValue, float32_t pv){
  * @param qv      量化值
  */
 static void CalcMembership(float32_t *ms, int32_t * index, float32_t qv){
-   if((qv>=-NL)&&(qv<-NM)){
+
+	float32_t temp;
+   if((qv>=NL)&&(qv<NM)){
+#ifdef zmf
+	 #define a1 -3.0F
+	 #define b1 -2.0F
+#endif
       index[0]=0;
       index[1]=1;
-      ms[0]=-0.5*qv-2.0;  //y=-0.5x-2.0
-      ms[1]=0.5*qv+3.0;   //y=0.5x+3.0
+#ifdef zmf
+		  temp = (qv-a1)/(b1-a1);
+		  temp *= temp;
+		  temp *=2;
+		  ms[0] = qv > -2.5? temp:1-temp;
+#else
+      ms[0]=-qv-2.0;  //y=-x-2.0
+#endif
+      ms[1]=qv+3.0;   //y=x+3.0
    }
-   else if((qv>=-NM)&&(qv<-NS)){
+   else if((qv>=NM)&&(qv<NS)){
       index[0]=1;
       index[1]=2;
-      ms[0]=-0.5*qv-1.0;  //y=-0.5x-1.0
-      ms[1]=0.5*qv+2.0;   //y=0.5x+2.0
+      ms[0]=-qv-1.0;  //y=-x-1.0
+      ms[1]=qv+2.0;   //y=x+2.0
    }
-   else if((qv>=-NS)&&(qv<ZE)){
+   else if((qv>=NS)&&(qv<ZE)){
       index[0]=2;
       index[1]=3;
-      ms[0]=-0.5*qv;      //y=-0.5x
-      ms[1]=0.5*qv+1.0;   //y=0.5x+1.0
+      ms[0]=-qv;      //y=-x
+      ms[1]=qv+1.0;   //y=x+1.0
    }
    else if((qv>=ZE)&&(qv<PS)){
       index[0]=3;
       index[1]=4;
-      ms[0]=-0.5*qv+1.0;  //y=-0.5x+1.0
-      ms[1]=0.5*qv;       //y=0.5x
+      ms[0]=-qv+1.0;  //y=-x+1.0
+      ms[1]=qv;       //y=x
    }
    else if((qv>=PS)&&(qv<PM)){
       index[0]=4;
       index[1]=5;
-      ms[0]=-0.5*qv+2.0;  //y=-0.5x+2.0
-      ms[1]=0.5*qv-1.0;   //y=0.5x-1.0
+      ms[0]=-qv+2.0;  //y=-x+2.0
+      ms[1]=qv-1.0;   //y=x-1.0
    }
    else if((qv>=PM)&&(qv<=PL)){
+#ifdef smf
+	 #define a2 2.0F
+	 #define b2 3.0F
+#endif
       index[0]=5;
       index[1]=6;
-      ms[0]=-0.5*qv+3.0;  //y=-0.5x+3.0
-      ms[1]=0.5*qv-2.0;   //y=0.5x-2.0
+
+#ifdef smf
+		  temp = (qv-a2)/(b2-a2);
+		  temp *= temp;
+		  temp *=2;
+		  ms[0] = qv < 2.5? temp:1-temp;
+#else
+      ms[0]=-qv+3.0;  //y=-x+3.0
+#endif
+      ms[1]=qv-2.0;   //y=x-2.0
    }
 }
 
@@ -152,12 +184,12 @@ static void FuzzyComputation (FUZZYPID *vPID, float *deltaK, float pv){
    CalcMembership(msE, indexE, qValue[0]);
    CalcMembership(msEC, indexEC, qValue[1]);
 
-   qValueK[0]=msE[0] * (msEC[0] * ruleKp[ indexEC[0] ][ indexE[0] ] + msEC[1] * ruleKp[ indexEC[1] ] [indexE[0] ])\
-             +msE[1] * (msEC[0] * ruleKp[ indexEC[0] ][ indexE[1] ] + msEC[1] * ruleKp[ indexEC[1] ] [indexE[1] ]);
-   qValueK[1]=msE[0] * (msEC[0] * ruleKi[ indexEC[0] ][ indexE[0] ] + msEC[1] * ruleKi[ indexEC[1] ] [indexE[0] ])\
-             +msE[1] * (msEC[0] * ruleKi[ indexEC[0] ][ indexE[1] ] + msEC[1] * ruleKi[ indexEC[1] ] [indexE[1] ]);
-   qValueK[2]=msE[0] * (msEC[0] * ruleKd[ indexEC[0] ][ indexE[0] ] + msEC[1] * ruleKd[ indexEC[1] ] [indexE[0] ])\
-             +msE[1] * (msEC[0] * ruleKd[ indexEC[0] ][ indexE[1] ] + msEC[1] * ruleKd[ indexEC[1] ] [indexE[1] ]);
+   qValueK[0]=msE[0] * (msEC[0] * ruleKp[ 6-indexE[0] ][ 6-indexEC[0] ] + msEC[1] * ruleKp[ 6-indexE[0] ] [ 6-indexEC[1] ])\
+             +msE[1] * (msEC[0] * ruleKp[ 6-indexE[1] ][ 6-indexEC[0] ] + msEC[1] * ruleKp[ 6-indexE[1] ] [ 6-indexEC[1] ]);
+   qValueK[1]=msE[0] * (msEC[0] * ruleKi[ indexE[0] ][ indexEC[0] ] + msEC[1] * ruleKi[ indexE[0] ] [ indexEC[1] ])\
+             +msE[1] * (msEC[0] * ruleKi[ indexE[1] ][ indexEC[0] ] + msEC[1] * ruleKi[ indexE[1] ] [ indexEC[1] ]);
+   qValueK[2]=msE[0] * (msEC[0] * ruleKd[ indexE[0] ][ indexEC[0] ] + msEC[1] * ruleKd[ indexE[0] ] [ indexEC[1] ])\
+             +msE[1] * (msEC[0] * ruleKd[ indexE[1] ][ indexEC[0] ] + msEC[1] * ruleKd[ indexE[1] ] [ indexEC[1] ]);
    deltaK[0] = LinearRealization(vPID->maxdKp, vPID->mindKp, qValueK[0]);
    deltaK[1] = LinearRealization(vPID->maxdKi, vPID->mindKi, qValueK[1]);
    deltaK[2] = LinearRealization(vPID->maxdKd, vPID->mindKd, qValueK[2]);

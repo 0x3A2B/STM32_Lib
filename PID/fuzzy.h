@@ -50,7 +50,11 @@ typedef struct{
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
 //fuzzy pid
-void PID_fuzzy_setup(FUZZYPID *pid);
+void FuzzyPIDInit(FUZZYPID *pid, float32_t tar,\
+                  float32_t maxdKp, float32_t mindKp, float32_t qKp, \
+                  float32_t maxdKi, float32_t mindKi, float32_t qKi, \
+                  float32_t maxdKd, float32_t mindKd, float32_t qKd);
+void FuzzyPID(FUZZYPID *pid, float32_t cur);
 
 /* Private types -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
@@ -133,10 +137,6 @@ static const float ruleKd[7][7]={
 };
 
 /* Private functions ---------------------------------------------------------*/
-void FuzzyPIDInit(FUZZYPID *pid, float32_t tar, \
-                  float32_t maxdKp, float32_t mindKp, float32_t qKp, \
-                  float32_t maxdKi, float32_t mindKi, float32_t qKi, \
-                  float32_t maxdKd, float32_t mindKd, float32_t qKd);
 static void LinearQuantization(FUZZYPID *vPID, float32_t *qValue, float32_t pv);
 static void CalcMembership(float32_t *ms, int32_t * index, float32_t qv);
 static void FuzzyComputation (FUZZYPID *vPID, float32_t *deltaK, float32_t pv);
