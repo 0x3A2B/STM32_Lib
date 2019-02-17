@@ -1,5 +1,5 @@
 /**
- * @file nnPID.c
+ * @file PID_hebb.c
  * @author AnQi Wang (waq5858@hotmail.com)
  * @brief 
  * @version 0.1
@@ -24,7 +24,7 @@
  * @param vMin     量程最小值
  * @param deadband 死区
  */
-void NeuralPIDInitialization(NEURALPID *vPID, float32_t tar, float vMax,float vMin, float deadband){
+void HebbPIDInit(HEBBPID *vPID, float32_t tar, float vMax,float vMin, float deadband){
    vPID->tar = tar;                        /*设定值*/
 
    vPID->kcoef = 0.12;                     /*神经元输出比例*/
@@ -34,13 +34,13 @@ void NeuralPIDInitialization(NEURALPID *vPID, float32_t tar, float vMax,float vM
 
    vPID->e = 0.0;                          /*前一拍偏差*/
    vPID->ee = 0.0;                         /*前两拍偏差*/
-	 vPID->result = -0.3;                       /*PID控制器结果 似乎不能为负*/
+   vPID->result = -0.3;                       /*PID控制器结果 似乎不能为负*/
    vPID->output = 0.0;                     /*输出值，百分比*/
 
    vPID->maximum = vMax;                   /*输出值上限*/
    vPID->minimum = vMin;                   /*输出值下限*/  
    //vPID->deadband = (vMax - vMin)*0.0005;  /*死区*/
-	 vPID->deadband = deadband;
+   vPID->deadband = deadband;
 
    vPID->wp = 0.10;                        /*比例加权系数*/
    vPID->wi = 0.10;                        /*积分加权系数*/
@@ -54,7 +54,7 @@ void NeuralPIDInitialization(NEURALPID *vPID, float32_t tar, float vMax,float vM
  * @param vPID   PID结构体
  * @param pv     测量值
  */
-void HebbPID(NEURALPID *vPID,float pv){
+void HebbPID(HEBBPID *vPID,float pv){
    float x[3];
    float w[3];
    float sabs;
@@ -64,13 +64,13 @@ void HebbPID(NEURALPID *vPID,float pv){
 
    error = vPID->tar - pv;
    result = vPID->result;
-   if(fabs_(error) > vPID->deadband){
+   if(fabs_pid(error) > vPID->deadband){
       x[1] = error - vPID->e; 
-		  x[0] = error;
+      x[0] = error;
       x[2] = error - vPID->e*2 + vPID->ee;
 
-      sabs = fabs_(vPID->wi) + fabs_(vPID->wp) + fabs_(vPID->wd);
-		  w[1] = vPID->wp/sabs;
+      sabs = fabs_pid(vPID->wi) + fabs_pid(vPID->wp) + fabs_pid(vPID->wd);
+      w[1] = vPID->wp/sabs;
       w[0] = vPID->wi/sabs;
       w[2] = vPID->wd/sabs;
 
@@ -105,8 +105,8 @@ void HebbPID(NEURALPID *vPID,float pv){
  * @param uk      当前输出
  * @param xi      
  */
-static void NeureLearningRules(NEURALPID *vPID,float zk,float uk,float *xi){
-	 vPID->wp = vPID->wp + vPID->kp*zk*uk*xi[1];
+static void NeureLearningRules(HEBBPID *vPID,float zk,float uk,float *xi){
+   vPID->wp = vPID->wp + vPID->kp*zk*uk*xi[1];
    vPID->wi = vPID->wi + vPID->ki*zk*uk*xi[0];
    vPID->wd = vPID->wd + vPID->kd*zk*uk*xi[2];
 }
@@ -117,6 +117,3 @@ static void NeureLearningRules(NEURALPID *vPID,float zk,float uk,float *xi){
 /* Private constants ---------------------------------------------------------*/
 /* Private macros ------------------------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
-static float32_t fabs_(float32_t error){
-   return error > 0 ? error : -error;
-}

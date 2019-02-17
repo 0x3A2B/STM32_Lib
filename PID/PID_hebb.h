@@ -1,5 +1,5 @@
 /**
- * @file nnPID.h
+ * @file PID_hebb.h
  * @author AnQi Wang (waq5858@hotmail.com)
  * @brief 
  * @version 0.1
@@ -38,19 +38,18 @@ typedef struct
   float wp;                     /*比例加权系数*/
   float wi;                     /*积分加权系数*/
   float wd;                     /*微分加权系数*/
-}NEURALPID;
+}HEBBPID;
 /* Exported constants --------------------------------------------------------*/
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
-void NeuralPIDInitialization(NEURALPID *vPID, float32_t tar, float vMax,float vMin, float deadband);
-void HebbPID(NEURALPID *vPID,float32_t pv);
-static void NeureLearningRules(NEURALPID *vPID,float32_t zk,float32_t uk,float32_t *xi);
+void HebbPIDInit(HEBBPID *vPID, float32_t tar, float vMax,float vMin, float deadband);
+void HebbPID(HEBBPID *vPID,float32_t pv);
+static void NeureLearningRules(HEBBPID *vPID,float32_t zk,float32_t uk,float32_t *xi);
 /* Private types -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 /* Private constants ---------------------------------------------------------*/
 /* Private macros ------------------------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
-static float32_t fabs_(float32_t error);
 
 #ifdef __cplusplus
 }

@@ -22,30 +22,35 @@
 #define PID_ENABLED 
 
 //#define PID_STD_ENABLED
-//#define PID_FUZZY_ENABLED
-//#define PID_HEBB_ENABLED
+#define PID_FUZZY_ENABLED
+#define PID_HEBB_ENABLED
 #define PID_RBF_ENABLED
+#define PID_EXPERT_ENABLED
+#define PID_TESTBENCH_ENABLED
 
-#ifdef PID_STDPID_ENABLED
-#define PID_STDPID_ENABLED 
-#include "PID_std.h"
-#endif	// PID_STDPID_ENABLED
+#ifdef PID_STD_ENABLED
+   #include "PID_std.h"
+#endif	// PID_STD_ENABLED
 
-#ifdef PID_FUZZYPID_ENABLED
-#define PID_FUZZYPID_ENABLED 
-#include "PID_fuzzy.h"
-#endif	// PID_FUZZYPID_ENABLED
+#ifdef PID_FUZZY_ENABLED
+   #include "PID_fuzzy.h"
+#endif	// PID_FUZZY_ENABLED
 
-#ifdef PID_HEBBPID_ENABLED
-#define PID_HEBBPID_ENABLED 
-#include "PID_hebb.h"
-#endif	// PID_HABBPID_ENABLED
+#ifdef PID_HEBB_ENABLED
+   #include "PID_hebb.h"
+#endif	// PID_HEBB_ENABLED
 
-#ifndef PID_RBF_ENABLED
-#define PID_RBF_ENABLED
-#include "PID_rbf.h"
+#ifdef PID_RBF_ENABLED
+   #include "PID_rbf.h"
 #endif	// PID_RBF_ENABLED
 
+#ifdef PID_EXPERT_ENABLED
+   #include "PID_expert.h"
+#endif
+
+#ifdef PID_TESTBENCH_ENABLED
+   #include "testbench.h"
+#endif
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
 
