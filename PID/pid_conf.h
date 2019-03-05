@@ -21,7 +21,7 @@
 /* ########################## Module Selection ############################## */
 #define PID_ENABLED 
 
-//#define PID_STD_ENABLED
+#define PID_STD_ENABLED
 #define PID_FUZZY_ENABLED
 #define PID_HEBB_ENABLED
 #define PID_RBF_ENABLED

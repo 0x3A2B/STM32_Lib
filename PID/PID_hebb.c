@@ -34,12 +34,12 @@ void HebbPIDInit(HEBBPID *vPID, float32_t tar, float vMax,float vMin, float dead
 
    vPID->e = 0.0;                          /*前一拍偏差*/
    vPID->ee = 0.0;                         /*前两拍偏差*/
-   vPID->result = -0.3;                       /*PID控制器结果 似乎不能为负*/
+   vPID->result = -0.3;                    /*PID控制器结果 似乎不能为负*/
    vPID->output = 0.0;                     /*输出值，百分比*/
 
    vPID->maximum = vMax;                   /*输出值上限*/
    vPID->minimum = vMin;                   /*输出值下限*/  
-   //vPID->deadband = (vMax - vMin)*0.0005;  /*死区*/
+   //vPID->deadband = (vMax - vMin)*0.0005;/*死区*/
    vPID->deadband = deadband;
 
    vPID->wp = 0.10;                        /*比例加权系数*/

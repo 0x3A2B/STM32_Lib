@@ -20,7 +20,7 @@
 /* Exported types ------------------------------------------------------------*/
 typedef struct
 {
-   float tar;               /*设定值*/
+   float tar;                    /*设定值*/
    float kp;                     /*比例系数*/
    float ki;                     /*积分系数*/
    float kd;                     /*微分系数*/

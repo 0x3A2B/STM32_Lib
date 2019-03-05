@@ -14,6 +14,20 @@
 /* Exported constants --------------------------------------------------------*/
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
+/**
+ * @brief 
+ * 
+ * @param vPID 
+ * @param tar 
+ * @param max 
+ * @param min 
+ * @param errabsmax 
+ * @param errabsmid 
+ * @param errabsmin 
+ * @param kp 
+ * @param ki 
+ * @param kd 
+ */
 void ExpertPIDInit(EXPERTPID *vPID, float tar, float max, float min, float errabsmax, float errabsmid, float errabsmin, float kp, float ki,float kd){
    vPID->tar = tar;                          /*设定值*/
    vPID->maximum = max;                      /*输出值上限*/
@@ -23,21 +37,28 @@ void ExpertPIDInit(EXPERTPID *vPID, float tar, float max, float min, float errab
    vPID->errorabsmin = errabsmin;            /*偏差绝对值最小值*/
    vPID->lasterror = 0;
    vPID->preerror = 0;
+   vPID->result = 0;
    vPID->kp = kp;
    vPID->ki = ki;
    vPID->kd = kd;
 }
+/**
+ * @brief 
+ * 
+ * @param vPID 
+ * @param pv 
+ */
 void ExpertPID(EXPERTPID *vPID, float pv){
    float thiserror;
    float deltaerror;
    float lastdeltaerror;
    float result;//本次调节输出值
 
-   thiserror=vPID->tar-pv;
-   deltaerror=thiserror-vPID->lasterror;
-   lastdeltaerror=vPID->lasterror-vPID->preerror;
+   thiserror = vPID->tar - pv;
+   deltaerror = thiserror - vPID->lasterror;
+   lastdeltaerror = vPID->lasterror - vPID->preerror;
 
-   if(fabs_pid(thiserror)>=vPID->errorabsmax){/*执行规则1*/
+   if(fabs_pid(thiserror) >= vPID->errorabsmax){/*执行规则1*/
       if(thiserror>0){
          result = vPID->maximum;
       }
@@ -46,8 +67,8 @@ void ExpertPID(EXPERTPID *vPID, float pv){
       }
    }
 
-   if((thiserror*deltaerror>0)||(deltaerror==0)){/*执行规则2*/
-      if(fabs_pid(thiserror)>=vPID->errorabsmid){
+   if((thiserror * deltaerror > 0)||(deltaerror == 0)){/*执行规则2*/
+      if(fabs_pid(thiserror) >= vPID->errorabsmid){
          result = vPID->result + 2.0 * (vPID->kp * deltaerror + vPID->ki * thiserror + vPID->kd * (deltaerror - lastdeltaerror));
       }
       else{
@@ -55,11 +76,11 @@ void ExpertPID(EXPERTPID *vPID, float pv){
       }
    }
 
-   if(((thiserror*deltaerror<0)&&(deltaerror*lastdeltaerror>0))||(thiserror==0)){/*执行规则3*/
-      result = vPID->result;
+   if(((thiserror * deltaerror < 0)&&(deltaerror * lastdeltaerror > 0))||(fabs_pid(thiserror) < 0.0001)){/*执行规则3*/
+      result = vPID->kp * thiserror + vPID->ki * 0+ vPID->kd * deltaerror ;
    }
 
-   if((thiserror*deltaerror<0)&&(deltaerror*lastdeltaerror<0)){/*执行规则4*/
+   if((thiserror * deltaerror < 0)&&(deltaerror * lastdeltaerror < 0)){/*执行规则4*/
       if(fabs_pid(thiserror)>=vPID->errorabsmid){
          result = vPID->result + 2.0 * vPID->kp * thiserror;
       }
@@ -68,23 +89,23 @@ void ExpertPID(EXPERTPID *vPID, float pv){
       }
    }
 
-   if((fabs_pid(thiserror)<=vPID->errorabsmin)&&(fabs_pid(thiserror)>0)){/*执行规则5*/
+   if((fabs_pid(thiserror) <= vPID->errorabsmin)&&(fabs_pid(thiserror) > 0)){/*执行规则5*/
       //result = vPID->result + 0.5 * vPID->kp * deltaerror + 0.3 * vPID->ki * thiserror;
       result = vPID->kp * deltaerror + vPID->ki * thiserror + vPID->kd * (deltaerror - lastdeltaerror);
    }
 
    /*对输出限值，避免超调*/
-   if(result>=vPID->maximum){
-      result=vPID->maximum;
+   if(result >= vPID->maximum){
+      result = vPID->maximum;
    }
-   if(result<=vPID->minimum){
-      result=vPID->minimum;
+   if(result <= vPID->minimum){
+      result = vPID->minimum;
    }
 
-   vPID->result=result;
-   vPID->preerror=vPID->lasterror;
-   vPID->lasterror=thiserror;
-   vPID->output=(result/(vPID->maximum-vPID->minimum))*100;
+   vPID->result = result;
+   vPID->preerror = vPID->lasterror;
+   vPID->lasterror = thiserror;
+   vPID->output = (result/(vPID->maximum - vPID->minimum))*100;
 }
 /* Private types -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
