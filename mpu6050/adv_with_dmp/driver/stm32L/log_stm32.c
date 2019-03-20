@@ -28,7 +28,7 @@
 #include "log.h"
 #include "stm32f4xx.h"
 #include "stm32f4xx_hal.h"
-
+#include "bsp_UART.h"
 #define BUF_SIZE        (256)
 #define PACKET_LENGTH   (23)
 
@@ -44,6 +44,7 @@ int fputcc(int ch)
 	
 	/* 等待发送完毕 */
 	//while (USART_GetFlagStatus(DEBUG_USART, USART_FLAG_TXE) == RESET);		
+    Sensors_UART_SendChar(ch);
 
 	return (ch);
 }
