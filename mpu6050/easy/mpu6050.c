@@ -40,12 +40,9 @@ int Sensors_I2C_ReadRegister(unsigned char slave_addr,
                                        unsigned short len, 
                                        unsigned char *data_ptr)
 {
-  int ret = 0;
-	
-  ret = 0;
-  ret = HAL_I2C_Mem_Read(mpu5060_i2c, slave_addr, reg_addr, sizeof(reg_addr), data_ptr, len, 0x3f3f3f);
-
-  return ret;
+   int ret = 0;
+   ret = HAL_I2C_Mem_Read(mpu5060_i2c, slave_addr, reg_addr, sizeof(reg_addr), data_ptr, len, 0x3f3f3f);
+   return ret;
 }
 
 /**

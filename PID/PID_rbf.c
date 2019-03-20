@@ -17,6 +17,15 @@
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
 //#define DEBUG
+/**
+ * @brief RBF_PID神经PID自整定初始化
+ * 
+ * @param vpid  pid结构体
+ * @param tar 目标值
+ * @param kp 
+ * @param ki 
+ * @param kd 
+ */
 void RbfPIDInit(RBFPID *vpid, float32_t tar, float32_t kp, float32_t ki, float32_t kd){
    vpid->tar = tar;            /*设定值*/
    vpid->krbf = 0.5;           /*网络学习速度*/
@@ -45,7 +54,12 @@ void RbfPIDInit(RBFPID *vpid, float32_t tar, float32_t kp, float32_t ki, float32
    }
 
 }
-
+/**
+ * @brief RBF_PID算法
+ * 
+ * @param vpid PID结构体
+ * @param pv 测量值
+ */
 void RBF(RBFPID *vpid, float32_t pv){
    float32_t err;            /*当前误差*/
    float32_t error[3];       /*误差输入*/
@@ -83,7 +97,13 @@ void RBF(RBFPID *vpid, float32_t pv){
 /* Private constants ---------------------------------------------------------*/
 /* Private macros ------------------------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
-
+/**
+ * @brief RBF网络计算, 雅各比行列式计算
+ * 
+ * @param vpid PID结构体
+ * @param jacobian 输出雅各比值 
+ * @param pv 当前测量值
+ */
 void net_cal(RBFPID *vpid, float32_t *jacobian, float32_t pv){
    float32_t net;                               /*辨识网络输出*/
    float32_t h[HIDE_NODE] = {0};                /*隐藏层输出向量*/
