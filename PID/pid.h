@@ -20,7 +20,9 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx_hal.h"
+#ifdef ARM_MATH_CM4
 #include "arm_math.h"
+#endif
 #include "pid_conf.h"
 
 /* Exported types ------------------------------------------------------------*/

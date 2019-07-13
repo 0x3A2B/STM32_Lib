@@ -53,3 +53,8 @@ dkms.conf
 
 #vscode
 */.vscode/
+*.bin
+*.ipch
+*.ioc
+*.json
+*.0x3A2B

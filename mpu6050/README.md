@@ -17,13 +17,7 @@
 ## Description
 含有DMP的MPU6050库.
 ## Usage
-初始化: `u8 MPU_Init(I2C_HandleTypeDef *i2c); `
-
-读取角加速度: `MPU_Get_Gyroscope(short *gx,short *gy,short *gz);`
-
-读取加速度原始值: `MPU_Get_Accelerometer(short *ax,short *ay,short *az);`
-
-读取原始温度值: `MPU6050ReadTemp(short *tempData)`, 摄氏度: `MPU_Get_Temperature(void);`
+请参照文件夹内的main.c文件
 
 ## Reference
 
