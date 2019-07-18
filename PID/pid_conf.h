@@ -8,8 +8,8 @@
  * @copyright Copyright (c) 2019
  * 
  */
-#ifndef __PID_CONF_TEMPLATE_H__ 
-#define __PID_CONF_TEMPLATE_H__  
+#ifndef __PID_CONF_H__ 
+#define __PID_CONF_H__  
 
 #ifdef __cplusplus
    extern "C" {
@@ -22,11 +22,11 @@
 #define PID_ENABLED 
 
 #define PID_STD_ENABLED
-#define PID_FUZZY_ENABLED
-#define PID_HEBB_ENABLED
-#define PID_RBF_ENABLED
-#define PID_EXPERT_ENABLED
-#define PID_TESTBENCH_ENABLED
+// #define PID_FUZZY_ENABLED
+// #define PID_HEBB_ENABLED
+// #define PID_RBF_ENABLED
+// #define PID_EXPERT_ENABLED
+// #define PID_TESTBENCH_ENABLED
 
 #ifdef PID_STD_ENABLED
    #include "PID_std.h"

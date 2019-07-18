@@ -44,13 +44,13 @@ typedef struct
 /* Exported functions --------------------------------------------------------*/
 void HebbPIDInit(HEBBPID *vPID, float32_t tar, float vMax,float vMin, float deadband);
 void HebbPID(HEBBPID *vPID,float32_t pv);
-static void NeureLearningRules(HEBBPID *vPID,float32_t zk,float32_t uk,float32_t *xi);
+
 /* Private types -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 /* Private constants ---------------------------------------------------------*/
 /* Private macros ------------------------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
-
+static void NeureLearningRules(HEBBPID *vPID,float32_t zk,float32_t uk,float32_t *xi);
 #ifdef __cplusplus
 }
 #endif

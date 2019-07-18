@@ -16,20 +16,36 @@
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
 /**
- * @brief 设置PID值
+ * @brief 设置PID参数
  * 
  * @param pid 
  * @param Kp 
  * @param Ki 
  * @param Kd 
  */
-void PID_set_f32(PID_f32 *pid, float32_t Kp, float32_t Ki, float32_t Kd)
+void PID_set(PID_f32 *pid, float32_t Kp, float32_t Ki, float32_t Kd)
 {
-   //pid_reset_f32(pid); // We needn't to reset pid befor change the kp, ki, kd value.
+   pid_reset_f32(pid);
    pid->kp = Kp;
    pid->ki = Ki;
    pid->kd = Kd;
    pid->result = 0;
+}
+
+/**
+ * @brief 重置PID
+ * 
+ * @param pid  需要重置的PID结构体
+ */
+void pid_reset_f32(PID_f32 *pid)
+{
+   //  pid->kp = 0;
+   //  pid->ki = 0;
+   //  pid->kd = 0;
+   pid->e = 0;
+   pid->ee = 0;
+   pid->sumE = 0;
+   //   pid->cur= 0;
 }
 
 /**
@@ -40,19 +56,44 @@ void PID_set_f32(PID_f32 *pid, float32_t Kp, float32_t Ki, float32_t Kd)
  */
 void StepPID(PID_f32 *pid, float32_t pv)
 {
-   float32_t thisE;  /**当前误差**/
-   float32_t result; /**PID输出**/
-   thisE = pv - pid->tar;
-   if (fabs_pid(thisE) < pid->deadband)
-   { //死区判断
-      thisE = 0;
-   }
+   float32_t thisError;
+   float32_t result;
 
+   thisError = pv - vPID->tar;            //得到偏差值
+   if (fabs(thisError) <= vPID->deadband) //判断死区
+   {
+      thisError = 0;
+   }
+#ifdef ADVCTRL
+   //变积分系数获取
+   factor = VariableIntegralCoefficient(thisError, vPID->errorAbsMax, vPID->errorAbsMin);
+   //变积分
+   vPID->integral = factor * thisError;
+   //不完全微分
+   vPID->derivative = (1 - vPID->alpha) * (thisError - 2 * vPID->e + vPID->ee) + vPID->alpha * vPID->derivative;
+   //计算PID输出
+   result = pid->kp * (thisE - pid->e) + pid->ki * vPID->integral + vPID->kd * vPID->derivative;
+#else
+   /* 经典步进PID*/
    result = pid->kp * (thisE - pid->e) + pid->ki * thisE + pid->kd * (thisE - 2 * pid->e + pid->ee);
    pid->result += result;
+#endif
 
-   pid->ee = pid->e;
-   pid->e = thisE;
+   if (vPID->ampCtrl)
+   {
+      /*对输出限幅，避免超调和积分饱和问题*/
+      if (result >= vPID->maximum)
+      {
+         result = vPID->maximum;
+      }
+      if (result <= vPID->minimum)
+      {
+         result = vPID->minimum;
+      }
+   }
+   vPID->ee = vPID->e; //存放偏差用于下次运算
+   vPID->e = thisError;
+   vPID->result = result;
 }
 
 /**
@@ -72,17 +113,21 @@ void PosPID(PID_f32 *vPID, float pv)
    {
       thisError = 0;
    }
+
+#ifdef ADVCTRL
    //变积分系数获取
    factor = VariableIntegralCoefficient(thisError, vPID->errorAbsMax, vPID->errorAbsMin);
-
    //变积分
    vPID->integral = factor * thisError + vPID->sumE;
-
    //不完全微分
-   vPID->derivative = vPID->kd * (1 - vPID->alpha) * (thisError - vPID->e) + vPID->alpha * vPID->derivative;
-
+   vPID->derivative = (1 - vPID->alpha) * (thisError - vPID->e) + vPID->alpha * vPID->derivative;
    //计算PID输出
-   result = vPID->kp * thisError + vPID->ki * vPID->integral + vPID->derivative;
+   result = vPID->kp * thisError + vPID->ki * vPID->integral + vPID->kd * vPID->derivative;
+#else
+   /* 经典位置PID*/
+   vPID->sumE += vPID->ki * thisError;
+   result = vPID->kp * thisError + vPID->sumE + vPID->kd * (thisError - vPID->e);
+#endif
 
    if (vPID->ampCtrl)
    {
@@ -100,39 +145,6 @@ void PosPID(PID_f32 *vPID, float pv)
    vPID->ee = vPID->e; //存放偏差用于下次运算
    vPID->e = thisError;
    vPID->result = result;
-
-   vPID->sumE = (vPID->ki * thisError + vPID->sumE) / 2;
-}
-
-/**
- * @brief 增减PID值
- * 
- * @param pid 
- * @param Kp 
- * @param Ki 
- * @param Kd 
- */
-void PID_setdiff_f32(PID_f32 *pid, float32_t Kp, float32_t Ki, float32_t Kd)
-{
-   //pid_reset_f32(pid); // We needn't to reset pid befor change the kP, kI, kD value.
-   pid->kp += Kp;
-   pid->ki += Ki;
-   pid->kd += Kd;
-}
-/**
- * @brief 重置PID
- * 
- * @param pid 
- */
-void pid_reset_f32(PID_f32 *pid)
-{
-   //  pid->kp = 0;
-   //  pid->ki = 0;
-   //  pid->kd = 0;
-   pid->e = 0;
-   pid->ee = 0;
-   pid->sumE = 0;
-   //   pid->cur= 0;
 }
 
 /* Private types -------------------------------------------------------------*/
