@@ -2,7 +2,7 @@
 #define _U8G2_HAL_F429_H_
 
 #include "u8x8.h"
-#include "stm32f4xx_hal.h"
+#include "main.h"
 
 void u8g2_i2c_handle_init(I2C_HandleTypeDef *i2c);
 uint8_t u8x8_gpio_and_delay_stm32f4_hal(u8x8_t *u8x8, uint8_t msg, uint8_t arg_int, void *arg_ptr);

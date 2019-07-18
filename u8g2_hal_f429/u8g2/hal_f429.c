@@ -1,5 +1,5 @@
 #include "u8x8.h"
-#include "stm32f4xx_hal.h"
+#include "main.h"
 
 I2C_HandleTypeDef *oled_i2c;
 

@@ -24,8 +24,8 @@ while (ret = mpu_dmp_init())
 sprintf(uart_tx, "DMP INIT ok\r\n");
 HAL_UART_Transmit(&huart3, uart_tx, strlen(uart_tx), 0x3FFF);
 ```
-##从FIFO获取值
-```
+## 从MPU的FIFO中获取姿态
+```C++
 if (ret = mpu_mpl_get_data(&pitch, &roll, &yaw))
 {
    sprintf(uart_tx, "MPU9255 MPL ERROR : %d\r\n", ret);
