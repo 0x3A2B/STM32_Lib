@@ -1,6 +1,6 @@
 # PID
 ## Description
-注1: STM32的DSP库中也有PID函数. 
+注1: STM32的DSP库中也有PID函数. (不好用)
 
 ### 模糊PID
 模糊表:
@@ -42,6 +42,11 @@
 初始化PID结构体: `void pid_setup_f32(PID_f32 *pid);`
 
 复位PID状态: `void pid_reset_f32(PID_f32 *pid);`
+
+### 经典PID(PID_std)
+
+结构体见代码, 初始化时必须要初始化的量有:
+`kp`, `ki`, `kd`
 
 ### 模糊PID算法
 初始化PID结构体: `void FuzzyPIDInit(FUZZYPID *pid, float32_t tar,float32_t maximum, float32_t minimum, float32_t maxdKp, float32_t mindKp, float32_t qKp, float32_t maxdKi, float32_t mindKi, float32_t qKi, float32_t maxdKd, float32_t mindKd, float32_t qKd)`

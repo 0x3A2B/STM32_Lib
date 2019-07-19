@@ -54,10 +54,11 @@ void pid_reset_f32(PID_f32 *pid)
  * @param pid 输入PID结构体
  * @param pv  当前测量值
  */
-void StepPID(PID_f32 *pid, float32_t pv)
+void StepPID(PID_f32 *vPID, float32_t pv)
 {
    float32_t thisError;
    float32_t result;
+	 float32_t factor;
 
    thisError = pv - vPID->tar;            //得到偏差值
    if (fabs(thisError) <= vPID->deadband) //判断死区
@@ -72,10 +73,10 @@ void StepPID(PID_f32 *pid, float32_t pv)
    //不完全微分
    vPID->derivative = (1 - vPID->alpha) * (thisError - 2 * vPID->e + vPID->ee) + vPID->alpha * vPID->derivative;
    //计算PID输出
-   result = pid->kp * (thisE - pid->e) + pid->ki * vPID->integral + vPID->kd * vPID->derivative;
+   result = vPID->kp * (thisError - vPID->e) + vPID->ki * vPID->integral + vPID->kd * vPID->derivative;
 #else
    /* 经典步进PID*/
-   result = pid->kp * (thisE - pid->e) + pid->ki * thisE + pid->kd * (thisE - 2 * pid->e + pid->ee);
+   result = vPID->kp * (thisE - vPID->e) + vPID->ki * thisE + vPID->kd * (thisE - 2 * vPID->e + vPID->ee);
    pid->result += result;
 #endif
 
