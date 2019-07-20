@@ -1263,7 +1263,6 @@ int dmp_set_interrupt_mode(unsigned char mode)
 int dmp_read_fifo(short *gyro, short *accel, long *quat,
     unsigned long *timestamp, short *sensors, unsigned char *more)
 {
-    int8_t ret;
     unsigned char fifo_data[MAX_PACKET_LENGTH];
     unsigned char ii = 0;
 
@@ -1273,8 +1272,8 @@ int dmp_read_fifo(short *gyro, short *accel, long *quat,
     sensors[0] = 0;
 
     /* Get a packet. */
-    if (ret = mpu_read_fifo_stream(dmp.packet_length, fifo_data, more))
-        return ret;
+    if (mpu_read_fifo_stream(dmp.packet_length, fifo_data, more))
+        return 1;
 
     /* Parse DMP packet. */
     if (dmp.feature_mask & (DMP_FEATURE_LP_QUAT | DMP_FEATURE_6X_LP_QUAT)) {

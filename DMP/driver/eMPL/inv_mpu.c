@@ -3636,7 +3636,6 @@ uint8_t mpu_dmp_get_data(float *pitch, float *roll, float *yaw)
 //    ÆäËû,Ê§°Ü
 uint8_t mpu_mpl_get_data(float *pitch, float *roll, float *yaw)
 {
-    int8_t ret;
     unsigned long sensor_timestamp, timestamp;
     short gyro[3], accel_short[3], compass_short[3], sensors;
     unsigned char more;
@@ -3644,8 +3643,8 @@ uint8_t mpu_mpl_get_data(float *pitch, float *roll, float *yaw)
     long data[9];
     int8_t accuracy;
 
-    if (ret = dmp_read_fifo(gyro, accel_short, quat, &sensor_timestamp, &sensors, &more))
-        return ret;
+    if (dmp_read_fifo(gyro, accel_short, quat, &sensor_timestamp, &sensors, &more))
+        return 1;
 
     if (sensors & INV_XYZ_GYRO)
     {
