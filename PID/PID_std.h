@@ -48,13 +48,11 @@ typedef struct
 
 /* Exported constants --------------------------------------------------------*/
 /* Exported macro ------------------------------------------------------------*/
-#define ADVCTRL 1
+//#define ADVCTRL 1
 /* Exported functions --------------------------------------------------------*/
-void PID_setup_f32(PID_f32 *pid);
-void PID_set_f32(PID_f32 *pid, float32_t Kp, float32_t Ki, float32_t Kd);
-void PID_set_diff_f32(PID_f32 *pid, float32_t Kp, float32_t Ki, float32_t Kd);
+void PID_set(PID_f32 *pid, float32_t Kp, float32_t Ki, float32_t Kd);
 void pid_reset_f32(PID_f32 *pid);
-void StepPID(PID_f32 *pid, float32_t pv);
+void StepPID(PID_f32 *vPID, float32_t pv);
 void PosPID(PID_f32 *vPID, float pv);
 /* Private types -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/

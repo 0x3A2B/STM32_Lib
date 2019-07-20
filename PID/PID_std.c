@@ -58,7 +58,7 @@ void StepPID(PID_f32 *vPID, float32_t pv)
 {
    float32_t thisError;
    float32_t result;
-	 float32_t factor;
+
 
    thisError = pv - vPID->tar;            //得到偏差值
    if (fabs(thisError) <= vPID->deadband) //判断死区
@@ -66,6 +66,8 @@ void StepPID(PID_f32 *vPID, float32_t pv)
       thisError = 0;
    }
 #ifdef ADVCTRL
+	 	 float32_t factor;
+	 
    //变积分系数获取
    factor = VariableIntegralCoefficient(thisError, vPID->errorAbsMax, vPID->errorAbsMin);
    //变积分
@@ -76,8 +78,8 @@ void StepPID(PID_f32 *vPID, float32_t pv)
    result = vPID->kp * (thisError - vPID->e) + vPID->ki * vPID->integral + vPID->kd * vPID->derivative;
 #else
    /* 经典步进PID*/
-   result = vPID->kp * (thisE - vPID->e) + vPID->ki * thisE + vPID->kd * (thisE - 2 * vPID->e + vPID->ee);
-   pid->result += result;
+   result = vPID->kp * (thisError - vPID->e) + vPID->ki * thisError + vPID->kd * (thisError - 2 * vPID->e + vPID->ee);
+   vPID->result += result;
 #endif
 
    if (vPID->ampCtrl)
@@ -107,7 +109,7 @@ void PosPID(PID_f32 *vPID, float pv)
 {
    float32_t thisError;
    float32_t result;
-   float32_t factor;
+
 
    thisError = pv - vPID->tar;            //得到偏差值
    if (fabs(thisError) <= vPID->deadband) //判断死区
@@ -116,6 +118,7 @@ void PosPID(PID_f32 *vPID, float pv)
    }
 
 #ifdef ADVCTRL
+	 float32_t factor;
    //变积分系数获取
    factor = VariableIntegralCoefficient(thisError, vPID->errorAbsMax, vPID->errorAbsMin);
    //变积分
