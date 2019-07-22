@@ -85,18 +85,17 @@ void StepPID(PID_f32 *vPID, float32_t pv)
    if (vPID->ampCtrl)
    {
       /*对输出限幅，避免超调和积分饱和问题*/
-      if (result >= vPID->maximum)
+      if (vPID->result >= vPID->maximum)
       {
-         result = vPID->maximum;
+         vPID->result = vPID->maximum;
       }
-      if (result <= vPID->minimum)
+      if (vPID->result <= vPID->minimum)
       {
-         result = vPID->minimum;
+         vPID->result = vPID->minimum;
       }
    }
    vPID->ee = vPID->e; //存放偏差用于下次运算
    vPID->e = thisError;
-   vPID->result = result;
 }
 
 /**
@@ -136,13 +135,13 @@ void PosPID(PID_f32 *vPID, float pv)
    if (vPID->ampCtrl)
    {
       /*对输出限幅，避免超调和积分饱和问题*/
-      if (result >= vPID->maximum)
+      if (vPID->result >= vPID->maximum)
       {
-         result = vPID->maximum;
+         vPID->result = vPID->maximum;
       }
-      if (result <= vPID->minimum)
+      if (vPID->result <= vPID->minimum)
       {
-         result = vPID->minimum;
+         vPID->result = vPID->minimum;
       }
    }
 
