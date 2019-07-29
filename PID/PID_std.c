@@ -59,15 +59,14 @@ void StepPID(PID_f32 *vPID, float32_t pv)
    float32_t thisError;
    float32_t result;
 
-
-   thisError = pv - vPID->tar;            //得到偏差值
+   thisError = vPID->tar - pv;            //得到偏差值
    if (fabs(thisError) <= vPID->deadband) //判断死区
    {
       thisError = 0;
    }
 #ifdef ADVCTRL
-	 	 float32_t factor;
-	 
+   float32_t factor;
+
    //变积分系数获取
    factor = VariableIntegralCoefficient(thisError, vPID->errorAbsMax, vPID->errorAbsMin);
    //变积分
@@ -109,15 +108,14 @@ void PosPID(PID_f32 *vPID, float pv)
    float32_t thisError;
    float32_t result;
 
-
-   thisError = pv - vPID->tar;            //得到偏差值
+   thisError = vPID->tar - pv;            //得到偏差值
    if (fabs(thisError) <= vPID->deadband) //判断死区
    {
       thisError = 0;
    }
 
 #ifdef ADVCTRL
-	 float32_t factor;
+   float32_t factor;
    //变积分系数获取
    factor = VariableIntegralCoefficient(thisError, vPID->errorAbsMax, vPID->errorAbsMin);
    //变积分
@@ -129,19 +127,31 @@ void PosPID(PID_f32 *vPID, float pv)
 #else
    /* 经典位置PID*/
    vPID->sumE += vPID->ki * thisError;
+   if (vPID->intCtrl)
+   {
+      /*积分限幅 */
+      if (vPID->sumE / vPID->ki > vPID->intMAX)
+      {
+         vPID->sumE = vPID->intMAX * vPID->ki;
+      }
+      if (vPID->sumE / vPID->ki < vPID->intMIN)
+      {
+         vPID->sumE = vPID->intMIN * vPID->ki;
+      }
+   }
    result = vPID->kp * thisError + vPID->sumE + vPID->kd * (thisError - vPID->e);
 #endif
 
    if (vPID->ampCtrl)
    {
       /*对输出限幅，避免超调和积分饱和问题*/
-      if (vPID->result >= vPID->maximum)
+      if (result > vPID->maximum)
       {
-         vPID->result = vPID->maximum;
+         result = vPID->maximum;
       }
-      if (vPID->result <= vPID->minimum)
+      if (result < vPID->minimum)
       {
-         vPID->result = vPID->minimum;
+         result = vPID->minimum;
       }
    }
 
